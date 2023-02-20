@@ -12,7 +12,7 @@ typedef struct MinHeap {
   int capacity;
 } MinHeap;
 
-// inicializa um novo heap
+/* inicializa um novo heap */
 MinHeap *createMinHeap() {
   MinHeap *newHeap = (MinHeap *)malloc(sizeof(MinHeap));
   newHeap->arrayStrings = (char **)malloc(sizeof(char *));
@@ -21,45 +21,46 @@ MinHeap *createMinHeap() {
   return newHeap;
 }
 
-// troca dois elementos dentro do heap, o atual com seu filho. não mantém
-// propriedade do heap.
+/* troca dois elementos dentro do heap, o atual com seu filho. não mantém
+ propriedade do heap. */
 void swap(MinHeap *heap, int i, int j) {
   char *temp = heap->arrayStrings[i];
   heap->arrayStrings[i] = heap->arrayStrings[j];
   heap->arrayStrings[j] = temp;
 }
 
-// insere novo elemento no heap
+/* insere novo elemento no heap */
 void insert(MinHeap *heap, char *data) {
-  // se o heap está cheio, dobra a capacidade
+  /* se o heap está cheio, dobra a capacidade */
   if (heap->size == heap->capacity) {
     heap->capacity *= 2;
     heap->arrayStrings =
         (char **)realloc(heap->arrayStrings, sizeof(char *) * heap->capacity);
   }
-  // insere o novo elemento no fim do array
+  /* insere o novo elemento no fim do array */
   heap->arrayStrings[heap->size] = (char *)malloc(strlen(data) + 1);
   strcpy(heap->arrayStrings[heap->size], data);
   heap->size++;
-  // restora a propriedade heap comparando com os nos pais
+  /* restora a propriedade heap comparando com os nos pais */
   int current = heap->size - 1;
   int parent = (current - 1) / 2;
   while (current > 0 &&
          strcmp(heap->arrayStrings[current], heap->arrayStrings[parent]) < 0) {
-    // enquanto o elemento atual não é raiz e o elemento atual é "menor" que o
-    // elemento pai(em outras palavras, não está ordenado ou na posição correta)
+    /* enquanto o elemento atual não é raiz e o elemento atual é "menor" que o
+     elemento pai(em outras palavras, não está ordenado ou na posição correta)
+   */
     swap(heap, current, parent);
     current =
-        parent; // atualiza o indice do elemento atual que flutuou para cima
-    parent = (current - 1) / 2; // atualiza o indice do novo elemento pai
+        parent; /* atualiza o indice do elemento atual que flutuou para cima */
+    parent = (current - 1) / 2; /* atualiza o indice do novo elemento pai */
   }
 }
-// remove o menor elemento do heap. o caller da função é responsável por liberar
-// a memória de min
+/* remove o menor elemento do heap. o caller da função é responsável por liberar
+ a memória de min */
 char *removeMin(MinHeap *heap) {
   if (heap->size == 0)
     return NULL;
-  char *min = heap->arrayStrings[0]; // TODO lembrar de liberar essa memória
+  char *min = heap->arrayStrings[0]; /*lembrar de liberar essa memória */
   heap->arrayStrings[0] = heap->arrayStrings[heap->size - 1];
   heap->size--;
   int current = 0;
@@ -69,17 +70,17 @@ char *removeMin(MinHeap *heap) {
     int child = left;
     if (right < heap->size &&
         strcmp(heap->arrayStrings[right], heap->arrayStrings[left]) < 0) {
-      // se o filho da direita do no atual existe e se o filho da direita é
-      // menor que filho da esquerda
-      child =
-          right; // o filho da direita é menor e deve ser comparado com o atual
-      // selecionando o menor filho, o atual sera comparado com o menor valor,
-      // garantindo a propriedade do min-heap
+      /* se o filho da direita do no atual existe e se o filho da direita é
+      menor que filho da esquerda*/
+      child = right; /* o filho da direita é menor e deve ser comparado com o
+                        atual*/
+      /* selecionando o menor filho, o atual sera comparado com o menor valor,
+      garantindo a propriedade do min-heap */
     }
     if (strcmp(heap->arrayStrings[current], heap->arrayStrings[child]) > 0) {
-      // se o elemento atual for maior que seu menor filho
+      /* se o elemento atual for maior que seu menor filho*/
       swap(heap, current, child);
-      current = child; // atualiza os indices
+      current = child; /* atualiza os indices*/
       left = 2 * current + 1;
       right = 2 * current + 2;
     } else
@@ -88,9 +89,10 @@ char *removeMin(MinHeap *heap) {
   return min;
 }
 
-// libera memoria do heap
+/* libera memoria do heap*/
 void destroyHeap(MinHeap *heap) {
-  for (int i = 0; i < heap->size; i++) {
+  int i;
+  for (i = 0; i < heap->size; i++) {
     free(heap->arrayStrings[i]);
   }
   free(heap->arrayStrings);
